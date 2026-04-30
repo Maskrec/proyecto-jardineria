@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Estado_laboral {
+  activo
+  inactivo
+}
+
+enum Tipo_permiso{
+  VACACION
+  CITA_MEDICA
+  ASUNTOS_PERSONALES
+}
+
+enum Estado_solicitud{
+  PENDIENTE
+  APROBADA
+  RECHAZADA
+}
+
+enum Prioridad{
+  ALTA
+  MEDIA
+  BAJA
+}
+
+
+
+
+model Personal{
+id_empleado         String      @id
+nombre_completo     String     
+email_corporativo   String      @unique
+telefono            String     
+cargo               String
+departamento        String
+dirección           String
+fecha_nacimiento    DateTime
+estado_laboral      Estado_laboral?      @default(activo)
+
+// Estas líneas permiten que desde un empleado puedas ver toda su info relacionada
+  asistencias       Asistencia_nomina[]
+  permisos          Permisos[]
+  formaciones       Formación[]
+  proyectos         Proyecto[]
+}
+
+model Asistencia_nomina{
+id_registro         Int          @id @default(autoincrement())
+id_empleado         String     
+hora_entrada        DateTime     
+hora_salida         DateTime?    
+ganancias_dia       Decimal
+bonos_activos       Decimal
+
+// Relación explícita
+  empleado        Personal  @relation(fields: [id_empleado], references: [id_empleado])
+}
+
+model Permisos{
+id_solicitud        Int          @id @default(autoincrement())
+id_empleado         String
+tipo_permiso        Tipo_permiso
+fecha_inicio        DateTime
+fecha_fin           DateTime
+estado              Estado_solicitud
+dias_disponibles    Int
+
+// Relación explícita
+  empleado        Personal         @relation(fields: [id_empleado], references: [id_empleado])
+}
+
+model Formación{
+id_formacion        Int            @id @default(autoincrement())
+id_empleado         String
+nombre_curso        String
+progreso            Int
+fecha_expiracion    DateTime
+reconocimiento      String?
+
+// Relación explícita
+  empleado        Personal @relation(fields: [id_empleado], references: [id_empleado])
+}
+
+model Proyecto{
+id_proyecto         Int          @id @default(autoincrement())
+id_empleado         String
+nombre_proyecto     String
+tipo_tarea          String
+prioridad           Prioridad   @default(MEDIA)
+progreso_proyecto   Int          @default(0)  
+
+// Relación explícita
+  responsable     Personal  @relation(fields: [id_empleado], references: [id_empleado])
+}
+
+

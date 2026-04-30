@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+
+# Base de datos local (Prisma/SQLite)
+/prisma/dev.db
+/prisma/dev.db-journal
+/dev.db
+
+# Configuración y variables de entorno
+.env
+
+# Archivos de compilación
+dist/
+*.log
