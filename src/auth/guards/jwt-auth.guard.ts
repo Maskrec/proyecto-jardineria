@@ -10,7 +10,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
     
     if (!token) {
-      throw new UnauthorizedException('Token no encontrado en la petición');
+      throw new UnauthorizedException('token no encontrado en la peticion');
     }
     try {
       const payload = await this.jwtService.verifyAsync(token, {
@@ -19,7 +19,7 @@ export class JwtAuthGuard implements CanActivate {
       // Asignamos el contenido del token (ID y rol) a la petición
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException('Token inválido o expirado');
+      throw new UnauthorizedException('token invalido o expirado');
     }
     return true;
   }

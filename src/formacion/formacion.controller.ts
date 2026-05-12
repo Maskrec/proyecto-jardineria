@@ -15,7 +15,7 @@ import { Role } from '@prisma/client';
 export class FormacionController {
   constructor(private readonly formacionService: FormacionService) {}
 
-  @ApiOperation({ summary: 'Registrar una nueva formación o capacitación' })
+  @ApiOperation({ summary: 'Registrar una nueva formacion o capacitacion' })
   @Post()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN, Role.RH)
@@ -23,7 +23,7 @@ export class FormacionController {
     return this.formacionService.create(createFormacionDto);
   }
 
-  @ApiOperation({ summary: 'Actualizar un registro de formación' })
+  @ApiOperation({ summary: 'Actualizar un registro de formacion' })
   @Patch(':id')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN, Role.RH)

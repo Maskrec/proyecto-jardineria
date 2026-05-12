@@ -25,7 +25,7 @@ export class FormacionService {
     });
 
     if (!existing) {
-      throw new NotFoundException('Registro de formación no encontrado');
+      throw new NotFoundException('Registro de formacion no encontrado');
     }
 
     const data: Record<string, any> = {};

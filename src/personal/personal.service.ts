@@ -14,7 +14,7 @@ export class PersonalService {
     const existeEmail = await this.prisma.personal.findUnique({
       where: { email_corporativo: rest.email_corporativo },
     });
-    if (existeEmail) throw new ConflictException('El correo ya está registrado');
+    if (existeEmail) throw new ConflictException('El correo ya esta registrado');
 
     const existeId = await this.prisma.personal.findUnique({
       where: { id_empleado: rest.id_empleado },
@@ -44,7 +44,7 @@ export class PersonalService {
     const empleadosRegistrados = await this.prisma.personal.count();
     if (empleadosRegistrados > 0) {
       throw new ForbiddenException(
-        'La aplicación ya fue inicializada. Usa el endpoint /personal/onboarding con un usuario ADMIN o RH.',
+        'La aplicacion ya fue inicializada. Usa el endpoint /personal/onboarding con un usuario ADMIN o RH.',
       );
     }
 

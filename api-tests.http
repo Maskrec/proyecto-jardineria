@@ -1,0 +1,125 @@
+### Variables
+@base_url = http://localhost:3000
+@auth_token = {{login.response.body.access_token}}
+
+### 1. LOGIN - Obtener Token con el Admin existente
+# @name login
+POST {{base_url}}/auth/login
+Content-Type: application/json
+
+{
+  "email_corporativo": "admin@brightview.com",
+  "password": "Admin123!"
+}
+
+### 2. INITIAL ONBOARDING - Crear Primer Admin (Debe fallar con 403)
+POST {{base_url}}/personal/onboarding/init
+Content-Type: application/json
+
+{
+  "id_empleado": "001-BV",
+  "nombre_completo": "Juan Perez Garcia",
+  "email_corporativo": "juan.perez@brightview.com",
+  "password": "password123",
+  "telefono": "+1234567890",
+  "cargo": "Gerente General",
+  "departamento": "Administracion",
+  "direccion": "Calle Principal 123",
+  "fecha_nacimiento": "1985-05-15"
+}
+
+### 3. CREAR EMPLEADO
+POST {{base_url}}/personal/onboarding
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id_empleado": "002-BV",
+  "nombre_completo": "Maria Rodriguez",
+  "email_corporativo": "maria.rodriguez@brightview.com",
+  "password": "password123",
+  "role": "EMPLEADO",
+  "telefono": "+1234567891",
+  "cargo": "Jardinero",
+  "departamento": "Operaciones",
+  "direccion": "Avenida Central 456",
+  "fecha_nacimiento": "1990-08-20"
+}
+
+### 4. CREAR ASISTENCIA
+POST {{base_url}}/asistencia
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id_empleado": "001-BV",
+  "hora_entrada": "2026-05-07T08:00:00Z",
+  "ganancias_dia": 120.50,
+  "bonos_activos": 25.00
+}
+
+### 5. ACTUALIZAR ASISTENCIA
+PATCH {{base_url}}/asistencia/1
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "hora_salida": "2026-05-07T17:30:00Z",
+  "ganancias_dia": 135.75
+}
+
+### 6. LISTAR ASISTENCIAS
+GET {{base_url}}/asistencia?id_empleado=001-BV
+Authorization: Bearer {{auth_token}}
+
+### 7. CREAR PERMISO
+POST {{base_url}}/permisos
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id_empleado": "001-BV",
+  "tipo_permiso": "VACACION",
+  "fecha_inicio": "2026-06-01T00:00:00Z",
+  "fecha_fin": "2026-06-05T23:59:59Z"
+}
+
+### 8. APROBAR PERMISO
+PATCH {{base_url}}/permisos/1/estado
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "estado": "APROBADA"
+}
+
+### 9. LISTAR PERMISOS
+GET {{base_url}}/permisos?id_empleado=001-BV
+Authorization: Bearer {{auth_token}}
+
+### 10. CREAR FORMACION
+POST {{base_url}}/formacion
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id_empleado": "001-BV",
+  "nombre_curso": "Diseño Biofilico Avanzado",
+  "progreso": 0,
+  "fecha_expiracion": "2027-05-07T00:00:00Z",
+  "reconocimiento": "Top 5% Company Talent"
+}
+
+### 11. ACTUALIZAR FORMACION
+PATCH {{base_url}}/formacion/1
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "progreso": 75,
+  "reconocimiento": "Certificado Completado"
+}
+
+### 12. LISTAR FORMACIONES
+GET {{base_url}}/formacion?id_empleado=001-BV
+Authorization: Bearer {{auth_token}}

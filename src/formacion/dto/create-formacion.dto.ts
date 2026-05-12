@@ -8,7 +8,7 @@ export class CreateFormacionDto {
   @IsNotEmpty()
   id_empleado!: string;
 
-  @ApiProperty({ description: 'Nombre del curso o capacitación', example: 'Diseño Biofílico Avanzado' })
+  @ApiProperty({ description: 'Nombre del curso o capacitacion', example: 'Diseño exteriores' })
   @IsString()
   @IsNotEmpty()
   nombre_curso!: string;
@@ -21,12 +21,12 @@ export class CreateFormacionDto {
   @Max(100)
   progreso?: number;
 
-  @ApiProperty({ description: 'Fecha de expiración de la capacitación', example: '2027-05-07T00:00:00Z' })
+  @ApiProperty({ description: 'Fecha de expiración de la capacitacion', example: '2027-05-07T00:00:00Z' })
   @IsDateString()
   @IsNotEmpty()
   fecha_expiracion!: string;
 
-  @ApiProperty({ description: 'Reconocimiento o mérito asociado', example: 'Top 5% Company Talent', required: false })
+  @ApiProperty({ description: 'Reconocimiento o merito asociado', example: 'Top 5% Company Talent', required: false })
   @IsOptional()
   @IsString()
   reconocimiento?: string;

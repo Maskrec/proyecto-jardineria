@@ -18,7 +18,7 @@ export class AsistenciaController {
     return this.asistenciaService.create(createAsistenciaDto);
   }
 
-  @ApiOperation({ summary: 'Actualizar un registro de asistencia' })
+  @ApiOperation({ summary: 'actualizar un registro de asistencia' })
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

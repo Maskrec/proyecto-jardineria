@@ -18,3 +18,5 @@ agent.md
 
 .gitignore
 requerimientos.txt
+
+test-api.sh

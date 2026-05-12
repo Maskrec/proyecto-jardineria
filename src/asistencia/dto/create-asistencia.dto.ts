@@ -13,7 +13,7 @@ export class CreateAsistenciaDto {
   @IsNotEmpty()
   hora_entrada!: string;
 
-  @ApiProperty({ description: 'Hora de salida en formato ISO', example: '2026-05-07T17:00:00Z', required: false })
+  @ApiProperty({ description: 'Hora de salida en formato ISO', example: '2026-05-07T17:00:00Z', required: false }) 
   @IsOptional()
   @IsDateString()
   hora_salida?: string;

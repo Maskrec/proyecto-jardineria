@@ -3,7 +3,7 @@ import { IsDateString, IsInt, IsOptional, IsString, Max, Min } from 'class-valid
 import { Type } from 'class-transformer';
 
 export class UpdateFormacionDto {
-  @ApiProperty({ description: 'Nombre del curso o capacitación', example: 'Diseño Biofílico Avanzado', required: false })
+  @ApiProperty({ description: 'Nombre del curso o capacitacion', example: 'Diseño Biofilico Avanzado', required: false })
   @IsOptional()
   @IsString()
   nombre_curso?: string;
@@ -16,12 +16,12 @@ export class UpdateFormacionDto {
   @Max(100)
   progreso?: number;
 
-  @ApiProperty({ description: 'Fecha de expiración de la capacitación', example: '2027-05-07T00:00:00Z', required: false })
+  @ApiProperty({ description: 'Fecha de expiracion de la capacitacion', example: '2027-05-07T00:00:00Z', required: false })
   @IsOptional()
   @IsDateString()
   fecha_expiracion?: string;
 
-  @ApiProperty({ description: 'Reconocimiento o mérito asociado', example: 'Top 5% Company Talent', required: false })
+  @ApiProperty({ description: 'reconocimiento o merito asociado', example: 'top 5% Company talent', required: false })
   @IsOptional()
   @IsString()
   reconocimiento?: string;

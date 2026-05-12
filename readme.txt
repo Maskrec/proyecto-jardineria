@@ -1,302 +1,164 @@
 # Backend BrightView Landscapes - API Documentation
 
-Esta es la documentacion completa del backend del sistema BrightView Landscapes para desarrolladores frontend.
+Esta es la documentación oficial del backend del sistema BrightView Landscapes para desarrolladores frontend. Aquí encontrarás todo lo necesario para conectar tu aplicación web o móvil con la API de forma rápida y sencilla.
 
-## Tecnologias Principales
-- Framework: NestJS (TypeScript)
-- ORM: Prisma (v7 Early Access)
-- Base de Datos: PostgreSQL
-- Autenticacion: JWT
-- Validacion: class-validator
+## Tecnologías Principales
+- **Framework:** NestJS (TypeScript)
+- **ORM:** Prisma (v7 Early Access)
+- **Base de Datos:** PostgreSQL
+- **Autenticación:** JWT (JSON Web Tokens)
+- **Validación:** class-validator
 
-## Configuracion del Proyecto
+---
+
+## Configuración Rápida para Frontend Developers
+
+Sigue estos pasos para arrancar el backend en tu entorno local y empezar a desarrollar contra él:
 
 ### 1. Instalar dependencias
-Asegurese de tener Node.js instalado. Abra la terminal en la raiz del proyecto y ejecute:
-
-```
+Asegúrate de tener Node.js instalado. Abre la terminal en la raíz del backend y ejecuta:
+```bash
 npm install
 ```
 
 ### 2. Configurar Variables de Entorno
-Cree un archivo llamado `.env` en la raiz del proyecto (al mismo nivel que `package.json`) y agregue las siguientes variables. Ajuste el usuario, contrasena y puerto segun la instalacion de PostgreSQL en su computadora:
-
-```
-DATABASE_URL="postgresql://postgres:equipo3@localhost:5432/brightview_db"
+Crea un archivo llamado `.env` en la raíz del proyecto y agrega tus variables locales. 
+```env
+DATABASE_URL="postgresql://postgres:TU_PASSWORD@localhost:5432/brightview_db"
 JWT_SECRET="super-secreto-brightview-2026-XD"
 ```
+*Nota: Asegúrate de que la base de datos `brightview_db` esté creada en tu servidor PostgreSQL local.*
 
-Nota: Asegurese de que la base de datos `brightview_db` ya este creada en su servidor PostgreSQL local antes de continuar.
-
-### 3. Configurar la Base de Datos con Prisma
-Para sincronizar el esquema con su base de datos (crear las tablas automaticamente) ejecute:
-
-```
+### 3. Levantar la Base de Datos
+Para crear todas las tablas en tu base de datos local:
+```bash
 npx prisma db push
 ```
 
-Para generar el cliente tipado de Prisma (necesario cada vez que modifica el schema):
-
-```
-npx prisma generate
-```
-
-### 4. Levantar el Servidor
-Para iniciar el servidor en modo desarrollo (con recarga automatica de cambios):
-
-```
+### 4. Iniciar el Servidor de Desarrollo
+```bash
 npm run start:dev
 ```
+¡Listo! La API estará corriendo en la URL base:
+**http://localhost:3000**
 
-El backend estara listo para recibir peticiones en http://localhost:3000.
+---
 
-### 5. Documentacion Interactiva
-La documentacion completa de la API esta disponible en Swagger UI en:
-http://localhost:3000/api
+## Pruebas y Exploración Rápida (Recomendado)
 
-## Autenticacion
+### Opción A: Probar directo desde VS Code
+Hemos incluido un archivo llamado `api-tests.http` en la raíz del proyecto. Si instalas la extensión **"REST Client"** en VS Code, podrás probar todos los endpoints con un solo click.
 
-La API utiliza JWT (JSON Web Tokens) para autenticacion. Todos los endpoints excepto el login requieren un token Bearer en el header Authorization.
+1. Abre `api-tests.http`.
+2. Busca la petición **1. LOGIN - Obtener Token con el Admin existente**.
+3. Haz click en `Send Request`. 
+4. El token se guardará automáticamente en una variable oculta y podrás ejecutar el resto de las peticiones (CREAR EMPLEADO, CREAR ASISTENCIA, etc.) de forma secuencial sin configurar nada más.
 
-### Login
+**Credenciales Admin por defecto (ya inyectadas en tu DB local):**
+- **Email:** `admin@brightview.com`
+- **Password:** `Admin123!`
+
+### Opción B: Swagger UI interactivo
+Si prefieres una interfaz gráfica en el navegador, visita:
+**http://localhost:3000/api**
+Allí podrás ver todos los schemas, DTOs exactos y probar los endpoints interactuando visualmente.
+
+---
+
+## Autenticación y Seguridad
+
+La API utiliza JWT. **Todos los endpoints (excepto el login)** requieren que envíes un token en el header `Authorization` de tu petición HTTP.
+
+### Ejemplo de Login desde el Frontend (fetch/axios)
+
+```javascript
+const response = await fetch('http://localhost:3000/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email_corporativo: 'admin@brightview.com',
+    password: 'Admin123!'
+  })
+});
+
+const data = await response.json();
+// data.access_token contiene el JWT
+localStorage.setItem('token', data.access_token);
 ```
-POST /auth/login
-Content-Type: application/json
 
-{
-  "email_corporativo": "usuario@empresa.com",
-  "password": "contrasena123"
-}
-```
+### Ejemplo de Petición Autenticada
 
-Respuesta exitosa:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "id": "001-BV",
-    "nombre": "Juan Perez",
-    "role": "ADMIN"
+En tus siguientes llamadas (por ejemplo, para obtener asistencias), deberás agregar el token al header así:
+
+```javascript
+const token = localStorage.getItem('token');
+const asistencias = await fetch('http://localhost:3000/asistencia?id_empleado=002-BV', {
+  headers: {
+    'Authorization': `Bearer ${token}` // <--- IMPORTANTE
   }
-}
+});
 ```
 
-Para usar el token en peticiones posteriores, incluyalo en el header:
-```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+*(Nota: CORS está configurado para aceptar peticiones locales del frontend).*
 
-## Endpoints de la API
+---
 
-### Gestion de Personal
+## Estructura de Endpoints Principales
 
-#### Crear primer usuario (solo cuando no hay usuarios registrados)
-```
-POST /personal/onboarding/init
-Content-Type: application/json
+Aquí tienes un resumen rápido. Recuerda consultar Swagger o `api-tests.http` para los detalles de todos los campos exactos.
 
-{
-  "id_empleado": "001-BV",
-  "nombre_completo": "Juan Perez Garcia",
-  "email_corporativo": "juan.perez@brightview.com",
-  "password": "password123",
-  "telefono": "+1234567890",
-  "cargo": "Gerente General",
-  "departamento": "Administracion",
-  "direccion": "Calle Principal 123",
-  "fecha_nacimiento": "1985-05-15"
-}
-```
+### Gestión de Personal
+- `POST /personal/onboarding/init`: Crea el primer admin (solo si la DB está vacía).
+- `POST /personal/onboarding`: Registra a un nuevo empleado (requiere token ADMIN o RH).
 
-#### Crear empleado (requiere autenticacion ADMIN o RH)
-```
-POST /personal/onboarding
-Authorization: Bearer <token>
-Content-Type: application/json
+### Asistencias
+- `POST /asistencia`: Registra entrada (hora, ganancias, etc.).
+- `PATCH /asistencia/:id`: Actualiza asistencia (ej. registra hora de salida).
+- `GET /asistencia?id_empleado=XXX`: Lista asistencias de un empleado.
 
-{
-  "id_empleado": "002-BV",
-  "nombre_completo": "Maria Rodriguez",
-  "email_corporativo": "maria.rodriguez@brightview.com",
-  "password": "password123",
-  "role": "EMPLEADO",
-  "telefono": "+1234567891",
-  "cargo": "Jardinero",
-  "departamento": "Operaciones",
-  "direccion": "Avenida Central 456",
-  "fecha_nacimiento": "1990-08-20"
-}
-```
+### Permisos
+- `POST /permisos`: Solicita un permiso (VACACION, CITA_MEDICA, etc.).
+- `PATCH /permisos/:id/estado`: Aprueba/Rechaza (solo ADMIN/RH).
+- `GET /permisos?id_empleado=XXX`: Lista permisos de un empleado.
 
-### Control de Asistencias
+### Formación
+- `POST /formacion`: Asigna curso a un empleado (solo ADMIN/RH).
+- `PATCH /formacion/:id`: Actualiza progreso (0 a 100).
+- `GET /formacion?id_empleado=XXX`: Lista formaciones de un empleado.
 
-#### Registrar asistencia
-```
-POST /asistencia
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "id_empleado": "001-BV",
-  "hora_entrada": "2026-05-07T08:00:00Z",
-  "hora_salida": "2026-05-07T17:00:00Z",
-  "ganancias_dia": 120.50,
-  "bonos_activos": 25.00
-}
-```
-
-#### Actualizar asistencia
-```
-PATCH /asistencia/1
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "hora_salida": "2026-05-07T17:30:00Z",
-  "ganancias_dia": 135.75
-}
-```
-
-#### Listar asistencias
-```
-GET /asistencia?id_empleado=001-BV
-Authorization: Bearer <token>
-```
-
-### Gestion de Permisos
-
-#### Crear solicitud de permiso
-```
-POST /permisos
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "id_empleado": "001-BV",
-  "tipo_permiso": "VACACION",
-  "fecha_inicio": "2026-06-01T00:00:00Z",
-  "fecha_fin": "2026-06-05T23:59:59Z"
-}
-```
-
-Tipos de permiso disponibles:
-- VACACION
-- CITA_MEDICA
-- ASUNTOS_PERSONALES
-
-#### Actualizar estado de permiso (solo ADMIN o RH)
-```
-PATCH /permisos/1/estado
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "estado": "APROBADA"
-}
-```
-
-Estados disponibles:
-- PENDIENTE
-- APROBADA
-- RECHAZADA
-
-#### Listar permisos
-```
-GET /permisos?id_empleado=001-BV
-Authorization: Bearer <token>
-```
-
-### Gestion de Formacion
-
-#### Crear registro de formacion (solo ADMIN o RH)
-```
-POST /formacion
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "id_empleado": "001-BV",
-  "nombre_curso": "Diseño Biofilico Avanzado",
-  "progreso": 0,
-  "fecha_expiracion": "2027-05-07T00:00:00Z",
-  "reconocimiento": "Top 5% Company Talent"
-}
-```
-
-#### Actualizar formacion (solo ADMIN o RH)
-```
-PATCH /formacion/1
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "progreso": 75,
-  "reconocimiento": "Certificado Completado"
-}
-```
-
-#### Listar formaciones
-```
-GET /formacion?id_empleado=001-BV
-Authorization: Bearer <token>
-```
-
-## Roles y Permisos
-
-La API utiliza un sistema de roles para controlar el acceso:
-
-- **ADMIN**: Acceso completo a todas las funcionalidades
-- **RH**: Gestion de personal, formacion y aprobacion de permisos
-- **JEFE_CUADRILLA**: Supervision de equipo operativo
-- **EMPLEADO**: Acceso basico a funciones personales
+---
 
 ## Manejo de Errores
 
-La API devuelve errores en formato JSON con la siguiente estructura:
+El backend siempre devolverá un JSON estructurado cuando algo falle. Es importante que el frontend lo capture para mostrar mensajes amigables al usuario (por ejemplo, en toasts o alertas):
 
 ```json
 {
   "statusCode": 400,
-  "message": "Mensaje de error descriptivo",
+  "message": ["email_corporativo must be an email"],
   "error": "Bad Request"
 }
 ```
 
-Codigos de estado comunes:
-- 200: Exito
-- 201: Creado exitosamente
-- 400: Datos invalidos
-- 401: No autorizado (token invalido o faltante)
-- 403: Prohibido (permisos insuficientes)
-- 404: Recurso no encontrado
-- 409: Conflicto (datos duplicados)
-- 500: Error interno del servidor
+Códigos más comunes que deberás interceptar en el Front:
+- **`200 / 201`**: Éxito.
+- **`400 Bad Request`**: Faltan datos o tienen formato incorrecto en el formulario enviado.
+- **`401 Unauthorized`**: El token no fue enviado o ya expiró (Deberás desloguear al usuario y enviarlo a la pantalla de Login).
+- **`403 Forbidden`**: El usuario está logueado pero no tiene permisos para esa acción (ej. un Empleado intentando acceder a panel de RRHH).
+- **`404 Not Found`**: El recurso solicitado no existe.
 
-## Validaciones
+---
 
-Todos los endpoints validan automaticamente los datos de entrada. Los campos requeridos y formatos se especifican en los DTOs. Los errores de validacion se devuelven con mensajes descriptivos.
+## Comandos Útiles para el Frontend Dev
 
-## Comandos Utiles
-
-Para visualizar e interactuar con la base de datos de manera grafica desde el navegador:
-
-```
+**Ver la base de datos visualmente:**
+```bash
 npx prisma studio
 ```
+Esto abrirá un panel en tu navegador (normalmente `http://localhost:5555`) donde puedes ver, editar y borrar registros directamente en la base de datos sin usar la API. Es indispensable para depurar si tus datos están llegando bien al backend.
 
-Para ejecutar pruebas (cuando se implementen):
-
+**Resetear la base de datos completa:**
+```bash
+npm run db:reset
 ```
-npm test
-```
-
-Para construir la aplicacion para produccion:
-
-```
-npm run build
-npm run start:prod
-```
-
-## Soporte
-
-Para preguntas sobre la API o problemas de integracion, consulte la documentacion de Swagger en http://localhost:3000/api o contacte al equipo de backend.
+Borra todo y vuelve a crear las tablas de cero. Muy útil si durante el desarrollo la base de datos se llena de datos basura de prueba.
