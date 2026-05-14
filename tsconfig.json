@@ -6,13 +6,8 @@
     // "outDir": "./dist",
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "ES2020",
-    "target": "ES2020",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    //"outDir": "./dist",
-    //"rootDir": "./src",
-    "noEmit": true,
+    "module": "nodenext",
+    "target": "esnext",
     "types": [],
     // For nodejs:
     // "lib": ["esnext"],
@@ -22,6 +17,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
+
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
@@ -42,15 +38,5 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "mobile"
-  ]
+  }
 }
