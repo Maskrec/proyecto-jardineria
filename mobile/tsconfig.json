@@ -1,6 +1,17 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "./node_modules/expo/tsconfig.base.json",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "."
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts"
+  ]
 }
