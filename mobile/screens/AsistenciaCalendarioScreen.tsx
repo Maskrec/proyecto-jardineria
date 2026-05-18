@@ -11,7 +11,7 @@ import BrightView from '../assets/brightview.svg';
 
 const { width } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
-type Route = RouteProp<RootStackParamList, 'AsistenciaCalendario'>;
+type Route = RouteProp<RootStackParamList, 'AsistenciaCalendarioScreen'>;
 
 const DIAS_SEMANA = ['do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa'];
 

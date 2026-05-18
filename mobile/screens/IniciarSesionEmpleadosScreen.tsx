@@ -64,7 +64,7 @@ export default function IniciarSesionScreen() {
       <View style={styles.bottomContainer}>
         <Pressable
           style={styles.loginButton}
-          onPress={() => navigation.navigate('DashboardEmpleado')}
+          onPress={() => navigation.navigate('DashboardEmpleadoScreen')}
         >
           <Text style={styles.loginButtonText}>Ingresar</Text>
         </Pressable>

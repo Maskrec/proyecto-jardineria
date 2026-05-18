@@ -53,7 +53,7 @@ export default function OffboardingScreen() {
 
         {/* Lista */}
         {empleados.map((e, i) => (
-          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleOffboarding', { empleado: e })}>
+          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleOffboardingScreen', { empleado: e })}>
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>
               <Text style={styles.cardName}>{e.nombre}</Text>

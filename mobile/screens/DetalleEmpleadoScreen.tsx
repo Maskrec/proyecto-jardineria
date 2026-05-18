@@ -13,7 +13,7 @@ import Asterisk from '../assets/SGRH.svg';
 import BrightView from '../assets/brightview.svg';
 
 const { width, height } = Dimensions.get('window');
-type Route = RouteProp<RootStackParamList, 'DetalleEmpleado'>;
+type Route = RouteProp<RootStackParamList, 'DetalleEmpleadoScreen'>;
 
 export default function DetalleEmpleadoScreen() {
   const route = useRoute<Route>();

@@ -51,7 +51,7 @@ export default function NominaScreen() {
           <Pressable
             key={i}
             style={styles.card}
-            onPress={() => navigation.navigate('NominaDetalle', { empleado: e, tipo: 'aprobar' })}
+            onPress={() => navigation.navigate('NominaDetalleScren', { empleado: e, tipo: 'aprobar' })}
           >
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>
@@ -77,7 +77,7 @@ export default function NominaScreen() {
           <Pressable
             key={i}
             style={styles.card}
-            onPress={() => navigation.navigate('NominaDetalle', { empleado: e, tipo: 'ver' })}
+            onPress={() => navigation.navigate('NominaDetalleScren', { empleado: e, tipo: 'detalle' })}
           >
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>

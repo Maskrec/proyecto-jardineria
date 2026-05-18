@@ -52,7 +52,7 @@ export default function OnboardingScreen() {
 
         {/* Lista de empleados */}
         {empleados.map((e, i) => (
-          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleEmpleado', { empleado: e })}>
+          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleEmpleadoScreen', { empleado: e })}>
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>
               <Text style={styles.cardName}>{e.nombre}</Text>
@@ -73,7 +73,7 @@ export default function OnboardingScreen() {
 
       {/* Botón flotante */}
       <View style={styles.bottomContainer}>
-        <Pressable style={styles.addButton} onPress={() => navigation.navigate('AnadirEmpleado')}>
+        <Pressable style={styles.addButton} onPress={() => navigation.navigate('AddEmpleadoScreen')}>
           <Text style={styles.addButtonText}>Anadir empleado</Text>
         </Pressable>
       </View>

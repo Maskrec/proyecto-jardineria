@@ -10,7 +10,7 @@ import BrightView from '../assets/brightview.svg';
 
 const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
-type Route = RouteProp<RootStackParamList, 'AsistenciaDetalle'>;
+type Route = RouteProp<RootStackParamList, 'AsistenciaDetalleScreen'>;
 
 export default function AsistenciaDetalleScreen() {
   const navigation = useNavigation<Nav>();
@@ -57,10 +57,10 @@ export default function AsistenciaDetalleScreen() {
       </ScrollView>
 
       <View style={styles.bottomContainer}>
-        <Pressable style={styles.confirmarBtn} onPress={() => navigation.navigate('Asistencias')}>
+        <Pressable style={styles.confirmarBtn} onPress={() => navigation.navigate('AsistenciasScreen')}>
           <Text style={styles.btnText}>Confirmar</Text>
         </Pressable>
-        <Pressable style={styles.anularBtn} onPress={() => navigation.navigate('Asistencias')}>
+        <Pressable style={styles.anularBtn} onPress={() => navigation.navigate('AsistenciasScreen')}>
           <Text style={styles.btnText}>Anular</Text>
         </Pressable>
       </View>

@@ -16,9 +16,9 @@ const porValidar = [
 ];
 
 const empleados = [
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael@example.com', fecha: '2026-05-18' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael@example.com', fecha: '2026-05-18' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael@example.com', fecha: '2026-05-18' },
 ];
 
 export default function AsistenciasScreen() {
@@ -41,7 +41,7 @@ export default function AsistenciasScreen() {
           <Pressable
             key={i}
             style={styles.card}
-            onPress={() => navigation.navigate('AsistenciaDetalle', { empleado: e, tipo: 'validar' })}
+            onPress={() => navigation.navigate('AsistenciaDetalleScreen', {empleado: e, tipo: 'validar'})}
           >
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>
@@ -65,7 +65,7 @@ export default function AsistenciasScreen() {
           <Pressable
             key={i}
             style={styles.card}
-            onPress={() => navigation.navigate('AsistenciaCalendario', { empleado: e })}
+            onPress={() => navigation.navigate('AsistenciaCalendarioScreen', { empleado: e })}
           >
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>

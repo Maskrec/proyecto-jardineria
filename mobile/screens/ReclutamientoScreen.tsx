@@ -18,11 +18,11 @@ const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const candidatos = [
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
 ];
 
 export default function ReclutamientoScreen() {
@@ -54,7 +54,7 @@ export default function ReclutamientoScreen() {
 
         {/* Lista de candidatos */}
         {candidatos.map((c, i) => (
-          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleCandidato', { candidato: c })}>
+          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleCandidatoScreen', {candidato: c })}>
             <View style={styles.avatar} />
             <View style={styles.cardInfo}>
               <Text style={styles.cardName}>{c.nombre}</Text>

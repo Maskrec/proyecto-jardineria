@@ -65,7 +65,7 @@ export default function DashboardAdminScreen() {
   const gridItems = [
     { label: 'Onboarding', Icon: Onboarding, screen: 'Onboarding' as keyof RootStackParamList },
     { label: 'Offboarding', Icon: Offboarding, screen: 'Offboarding' as keyof RootStackParamList },
-    { label: 'Asistencias', Icon: Asistencias, screen: 'Asistencias' as keyof RootStackParamList },
+    { label: 'Asistencias', Icon: Asistencias, screen: 'AsistenciasScreen' as keyof RootStackParamList },
     { label: 'Nomina', Icon: Nomina, screen: 'Nomina' as keyof RootStackParamList },
     { label: 'Reclutamiento', Icon: Reclutamiento, screen: 'Reclutamiento' as keyof RootStackParamList },
     { label: 'Perfil', Icon: Perfil, screen: 'Perfil' as keyof RootStackParamList },
