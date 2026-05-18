@@ -7,7 +7,7 @@ import {
   Pressable,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import Asterisk from '../assets/SGRH.svg';
@@ -15,18 +15,20 @@ import BrightView from '../assets/brightview.svg';
 
 const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+type Route = RouteProp<RootStackParamList, 'DetalleCandidato'>;
 
-const detalles = [
-  'email@example.com',
-  '+00 111 111 1111',
-  'Lunes a viernes, de 9:00 a 18:00',
-  'Fecha de nacimiento: 05 mayo 2026',
-  'Fecha de postulacion: 05 mayo 2026',
-  'Domicilio: calle n colonia ciudad',
-];
-
-export default function PerfilScreen() {
+export default function DetalleCandidatoScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
+  const { candidato } = route.params;
+
+  const detalles = [
+    'email@example.com',
+    '+00 111 111 1111',
+    'Lunes a viernes, de 9:00 a 18:00',
+    'Fecha de nacimiento: 05 mayo 2026',
+    'Fecha de postulacion: 05 mayo 2026',
+  ];
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFF' }}>
@@ -43,13 +45,13 @@ export default function PerfilScreen() {
         <View style={styles.profileRow}>
           <View style={styles.avatar} />
           <View style={styles.profileInfo}>
-            <Text style={styles.nombre}>Natanael Cano</Text>
-            <Text style={styles.detailGray}>Departamento</Text>
-            <Text style={styles.detailGray}>Puesto de trabajo</Text>
+            <Text style={styles.nombre}>{candidato.nombre}</Text>
+            <Text style={styles.detailGray}>{candidato.departamento}</Text>
+            <Text style={styles.detailGray}>{candidato.puesto}</Text>
           </View>
         </View>
 
-        {/* Card detalles */}
+        {/* Card de detalles */}
         <View style={styles.infoCard}>
           {detalles.map((d, i) => (
             <View key={i}>
@@ -62,13 +64,13 @@ export default function PerfilScreen() {
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Botón cerrar sesión */}
+      {/* Botón reclutar */}
       <View style={styles.bottomContainer}>
         <Pressable
-          style={styles.cerrarBtn}
-          onPress={() => navigation.reset({ index: 0, routes: [{ name: 'IniciarSesion' }] })}
+          style={styles.reclutarButton}
+          onPress={() => navigation.navigate('Reclutamiento')}
         >
-          <Text style={styles.cerrarBtnText}>Cerrar Sesión</Text>
+          <Text style={styles.reclutarButtonText}>Reclutar</Text>
         </Pressable>
       </View>
     </View>
@@ -143,13 +145,13 @@ const styles = StyleSheet.create({
     left: 24,
     right: 24,
   },
-  cerrarBtn: {
+  reclutarButton: {
     backgroundColor: '#111',
     borderRadius: 30,
     paddingVertical: 18,
     alignItems: 'center',
   },
-  cerrarBtnText: {
+  reclutarButtonText: {
     fontSize: 16,
     fontFamily: 'FunnelDisplay_700Bold',
     color: '#FFF',

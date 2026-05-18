@@ -1,25 +1,180 @@
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Dimensions,
+  Pressable,
+  TextInput,
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
-import { Pressable } from 'react-native';
+import Asterisk from '../assets/SGRH.svg';
+import BrightView from '../assets/brightview.svg';
 
+const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+const porAprobar = [
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+];
+
+const empleados = [
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
+];
 
 export default function NominaScreen() {
   const navigation = useNavigation<Nav>();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nómina</Text>
-      <Pressable onPress={() => navigation.goBack()}>
-        <Text style={styles.back}>← Volver</Text>
-      </Pressable>
+    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <StatusBar style="dark" />
+
+        {/* Header */}
+        <View style={styles.header}>
+          <Asterisk width={120} height={36} />
+          <BrightView width={120} height={36} />
+        </View>
+
+        {/* Título */}
+        <Text style={styles.title}>Nomina</Text>
+
+        {/* Nóminas por aprobar */}
+        <Text style={styles.sectionLabel}>Nominas por aprobar</Text>
+        {porAprobar.map((e, i) => (
+          <Pressable
+            key={i}
+            style={styles.card}
+            onPress={() => navigation.navigate('NominaDetalle', { empleado: e, tipo: 'aprobar' })}
+          >
+            <View style={styles.avatar} />
+            <View style={styles.cardInfo}>
+              <Text style={styles.cardName}>{e.nombre}</Text>
+              <Text style={styles.cardDetail}>{e.departamento}</Text>
+              <Text style={styles.cardDetail}>{e.puesto}</Text>
+            </View>
+          </Pressable>
+        ))}
+
+        {/* Buscador */}
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Ingresa tu busqueda..."
+            placeholderTextColor="#aaa"
+          />
+          <View style={styles.searchButton} />
+        </View>
+
+        {/* Lista general */}
+        {empleados.map((e, i) => (
+          <Pressable
+            key={i}
+            style={styles.card}
+            onPress={() => navigation.navigate('NominaDetalle', { empleado: e, tipo: 'ver' })}
+          >
+            <View style={styles.avatar} />
+            <View style={styles.cardInfo}>
+              <Text style={styles.cardName}>{e.nombre}</Text>
+              <Text style={styles.cardDetail}>{e.departamento}</Text>
+              <Text style={styles.cardDetail}>{e.puesto}</Text>
+            </View>
+          </Pressable>
+        ))}
+
+        <View style={{ height: 40 }} />
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF' },
-  title: { fontSize: 28, fontFamily: 'FunnelDisplay_700Bold', color: '#111', marginBottom: 20 },
-  back: { fontSize: 16, fontFamily: 'FunnelDisplay_400Regular', color: '#BCF0AE' },
+  container: {
+    paddingHorizontal: 24,
+    paddingTop: 56,
+    paddingBottom: 20,
+    backgroundColor: '#FFF',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 28,
+  },
+  title: {
+    fontSize: 40,
+    fontFamily: 'FunnelDisplay_700Bold',
+    color: '#111',
+    lineHeight: 46,
+    marginBottom: 8,
+  },
+  sectionLabel: {
+    fontSize: 14,
+    fontFamily: 'FunnelDisplay_400Regular',
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginVertical: 24,
+  },
+  searchInput: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: '#111',
+    borderRadius: 30,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    fontSize: 15,
+    fontFamily: 'FunnelDisplay_400Regular',
+    color: '#333',
+  },
+  searchButton: {
+    width: 64,
+    height: 50,
+    backgroundColor: '#BCF0AE',
+    borderRadius: 30,
+  },
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
+    gap: 16,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#D9D9D9',
+    flexShrink: 0,
+  },
+  cardInfo: { flex: 1, gap: 4 },
+  cardName: {
+    fontSize: 15,
+    fontFamily: 'FunnelDisplay_700Bold',
+    color: '#111',
+    marginBottom: 2,
+  },
+  cardDetail: {
+    fontSize: 14,
+    fontFamily: 'FunnelDisplay_400Regular',
+    color: '#888',
+    lineHeight: 20,
+  },
 });

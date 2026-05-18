@@ -18,6 +18,13 @@ import AsistenciasScreen from './screens/AsistenciasScreen';
 import NominaScreen from './screens/NominaScreen';
 import ReclutamientoScreen from './screens/ReclutamientoScreen';
 import PerfilScreen from './screens/PerfilScreen';
+import AnadirEmpleadoScreen from './screens/AddEmpleadoScreen';
+import DetalleEmpleadoScreen from './screens/DetalleEmpleadoScreen';
+import DetalleCandidatoScreen from './screens/DetalleCandidatoScreen';
+import DetalleOffboardingScreen from './screens/DetalleOffboardingScreen';
+import NominaDetalleScreen from './screens/NominaDetalleScren';
+import AsistenciasDetalleScreen from './screens/AsistenciaDetalleScreen';
+import AsistenciaCalendarioScreen from './screens/AsistenciaCalendarioScreen';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,6 +42,13 @@ export type RootStackParamList = {
   Nomina: undefined;
   Reclutamiento: undefined;
   Perfil: undefined;
+  AnadirEmpleado: undefined;
+  DetalleEmpleado: { empleado: {nombre: string; departamento: string; puesto: string; email: string; fecha: string} };
+  DetalleCandidato: { candidato: {nombre: string; departamento: string; puesto: string} };
+  DetalleOffboarding: { empleado: {nombre: string; departamento: string; puesto: string; email: string; fecha: string} };
+  NominaDetalle: { empleado: {nombre: string; departamento: string; puesto: string;}; tipo: 'aprobar' | 'ver' };
+  AsistenciaDetalle: { empleado: {nombre: string; departamento: string; puesto: string;}; tipo: 'validar' | 'ver' };
+  AsistenciaCalendario: { empleado: {nombre: string; departamento: string; puesto: string;}; };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -120,6 +134,13 @@ export default function App() {
         <Stack.Screen name="Nomina" component={NominaScreen} />
         <Stack.Screen name="Reclutamiento" component={ReclutamientoScreen} />
         <Stack.Screen name="Perfil" component={PerfilScreen} />
+        <Stack.Screen name="AnadirEmpleado" component={AnadirEmpleadoScreen} />
+        <Stack.Screen name="DetalleEmpleado" component={DetalleEmpleadoScreen} />
+        <Stack.Screen name="DetalleCandidato" component={DetalleCandidatoScreen} />
+        <Stack.Screen name="DetalleOffboarding" component={DetalleOffboardingScreen} />
+        <Stack.Screen name="NominaDetalle" component={NominaDetalleScreen} />
+        <Stack.Screen name="AsistenciaDetalle" component={AsistenciasDetalleScreen} />
+        <Stack.Screen name="AsistenciaCalendario" component={AsistenciaCalendarioScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
