@@ -30,7 +30,10 @@ import AddEmpleadoScreen from './screens/AddEmpleadoScreen';
 import DetalleEmpleadoScreen from './screens/DetalleEmpleadoScreen';
 import NominaDetalleScren from './screens/NominaDetalleScren';
 import DetalleCandidatoScreen from './screens/DetalleCandidatoScreen';
-
+import NotificacionesScreen from './screens/NotificacionesScreen';
+import PerfilEmpleadoScreen from './screens/PerfilEmpleadoScreen';
+import ContratoScreen from './screens/ContratoScreen';
+import CertificadosScreen from './screens/CertificadosScreen';
 import AsistenciaEmpleadoScreen from './screens/AsistenciaEmpleadoScreen';
 
 SplashScreen.preventAutoHideAsync();
@@ -62,7 +65,11 @@ export type RootStackParamList = {
   AsistenciaCalendarioScreen: { empleado: { nombre: string; departamento: string; puesto: string; email: string; fecha: string } };     
   DetalleCandidatoScreen: { candidato: { nombre: string; departamento: string; puesto: string; email: string; fecha: string } };
 
+  NotificacionesScreen: undefined;
   AsistenciaEmpleadoScreen: undefined;
+  PerfilEmpleadoScreen: undefined;
+  ContratoScreen: undefined;  
+  CertificadosScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -161,6 +168,10 @@ export default function App() {
         <Stack.Screen name="AsistenciaCalendarioScreen" component={AsistenciaCalendarioScreen} />
         <Stack.Screen name="DetalleCandidatoScreen" component={DetalleCandidatoScreen} />
         <Stack.Screen name="AsistenciaEmpleadoScreen" component={AsistenciaEmpleadoScreen} />
+        <Stack.Screen name="NotificacionesScreen" component={NotificacionesScreen} />
+        <Stack.Screen name="PerfilEmpleadoScreen" component={PerfilEmpleadoScreen} />
+        <Stack.Screen name="ContratoScreen" component={ContratoScreen} />
+        <Stack.Screen name="CertificadosScreen" component={CertificadosScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

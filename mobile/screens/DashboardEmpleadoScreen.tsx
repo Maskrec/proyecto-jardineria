@@ -52,9 +52,9 @@ export default function DashboardEmpleadoScreen() {
   const gridItems = [
     { label: 'Asistencias', Icon: AsistenciasIcon, screen: 'AsistenciaEmpleadoScreen' as keyof RootStackParamList },
     { label: 'Nomina', Icon: NominaIcon, screen: 'NominaEmpleadoScreen' as keyof RootStackParamList },
-    { label: 'Certificados', Icon: OnboardingIcon, screen: 'Perfil' as keyof RootStackParamList },
-    { label: 'Procesos', Icon: ReclutamientoIcon, screen: 'Reclutamiento' as keyof RootStackParamList },
-    { label: 'Perfil', Icon: PerfilIcon, screen: 'Perfil' as keyof RootStackParamList },
+    { label: 'Certificados', Icon: OnboardingIcon, screen: 'CertificadosScreen' as keyof RootStackParamList },
+    { label: 'Notificaciones', Icon: ReclutamientoIcon, screen: 'NotificacionesScreen' as keyof RootStackParamList },
+    { label: 'Perfil', Icon: PerfilIcon, screen: 'PerfilEmpleadoScreen' as keyof RootStackParamList },
   ];
 
   return (

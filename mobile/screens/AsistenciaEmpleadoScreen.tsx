@@ -20,11 +20,6 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 const DIAS_SEMANA = ['do', 'lu', 'ma', 'mi', 'ju', 'vi', 'sa'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-const marcados: Record<number, 'green' | 'red' | 'blue'> = {
-  1: 'green', 2: 'green', 3: 'green', 4: 'green', 5: 'green', 6: 'green',
-  7: 'green', 8: 'green', 9: 'red', 10: 'blue', 22: 'blue', 23: 'blue',
-};
-
 const colorMap: Record<string, string> = {
   green: '#BCF0AE',
   red: '#F87171',
@@ -49,11 +44,27 @@ function getPrimerDia(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
+function getHoraActual() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes().toString().padStart(2, '0');
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = h % 12 || 12;
+  return `${h12}:${m} ${ampm}`;
+}
+
 export default function AsistenciaEmpleadoScreen() {
   const navigation = useNavigation<Nav>();
   const [mes, setMes] = useState(4);
   const [anio, setAnio] = useState(2026);
   const [diaSeleccionado, setDiaSeleccionado] = useState<number | null>(null);
+  const [horaEntrada, setHoraEntrada] = useState<string | null>(null);
+  const [horaSalida, setHoraSalida] = useState<string | null>(null);
+  const [marcadosDinamicos, setMarcadosDinamicos] = useState<Record<number, 'green' | 'red' | 'blue'>>({
+    1: 'green', 2: 'green', 3: 'green', 4: 'green', 5: 'green', 6: 'green',
+    7: 'green', 8: 'green', 9: 'red', 10: 'blue', 22: 'blue', 23: 'blue',
+  });
+  const [pendientes, setPendientes] = useState<Record<number, string>>({});
 
   const diasEnMes = getDiasEnMes(anio, mes);
   const primerDia = getPrimerDia(anio, mes);
@@ -70,7 +81,24 @@ export default function AsistenciaEmpleadoScreen() {
     else setMes(m => m + 1);
   };
 
-  const peticiones = diaSeleccionado !== null ? peticionesDia : peticionesNormal;
+  const handleCheckIn = () => {
+    setHoraEntrada(getHoraActual());
+    setHoraSalida(null);
+  };
+
+  const handleCheckOff = () => {
+    setHoraSalida(getHoraActual());
+    const hoy = new Date().getDate();
+    setMarcadosDinamicos(prev => ({ ...prev, [hoy]: 'green' }));
+  };
+
+  const handleSolicitud = (tipo: string) => {
+    if (diaSeleccionado !== null) {
+      setMarcadosDinamicos(prev => ({ ...prev, [diaSeleccionado]: 'blue' }));
+      setPendientes(prev => ({ ...prev, [diaSeleccionado]: tipo }));
+      setDiaSeleccionado(null);
+    }
+  };
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
@@ -104,7 +132,7 @@ export default function AsistenciaEmpleadoScreen() {
             </View>
           ))}
           {dias.map(d => {
-            const marca = marcados[d];
+            const marca = marcadosDinamicos[d];
             const seleccionado = diaSeleccionado === d;
             return (
               <Pressable
@@ -129,22 +157,49 @@ export default function AsistenciaEmpleadoScreen() {
         </View>
       </View>
 
+      {/* Registrar Turno */}
+      <Text style={styles.turnoTitle}>Registrar Turno</Text>
+
+      {horaEntrada && (
+        <View style={styles.turnoRow}>
+          <Text style={styles.turnoLabel}>Entrada</Text>
+          <Text style={styles.turnoHora}>{horaEntrada}</Text>
+        </View>
+      )}
+
+      {horaSalida && (
+        <View style={styles.turnoRow}>
+          <Text style={styles.turnoLabel}>Salida</Text>
+          <Text style={styles.turnoHora}>{horaSalida}</Text>
+        </View>
+      )}
+
+      {!horaEntrada && (
+        <Pressable style={styles.checkInBtn} onPress={handleCheckIn}>
+          <Text style={styles.checkBtnText}>Check-in</Text>
+        </Pressable>
+      )}
+
+      {horaEntrada && !horaSalida && (
+        <Pressable style={styles.checkInBtn} onPress={handleCheckOff}>
+          <Text style={styles.checkBtnText}>Check-off</Text>
+        </Pressable>
+      )}
+
       {/* Peticiones */}
       <Text style={styles.peticionesTitle}>Peticiones</Text>
 
       {diaSeleccionado !== null ? (
-        // Vista de día seleccionado — opciones de solicitud
         peticionesDia.map((p, i) => (
-          <View key={i} style={styles.peticionCard}>
+          <Pressable key={i} style={styles.peticionCard} onPress={() => handleSolicitud(p.titulo)}>
             <View style={styles.peticionBarra} />
             <View style={styles.peticionInfo}>
               <Text style={styles.peticionTituloBold}>{p.titulo}</Text>
               <Text style={styles.peticionHorario}>{p.horario}</Text>
             </View>
-          </View>
+          </Pressable>
         ))
       ) : (
-        // Vista normal — peticiones con estado
         peticionesNormal.map((p, i) => (
           <View key={i} style={styles.peticionCard}>
             <View style={styles.peticionBarra} />
@@ -166,7 +221,22 @@ export default function AsistenciaEmpleadoScreen() {
         ))
       )}
 
-      {/* Footer */}
+      {/* Leyendas de días pendientes */}
+      {Object.entries(pendientes).map(([dia, tipo]) => (
+        <View key={dia} style={styles.pendienteCard}>
+          <View style={[styles.peticionBarra, { backgroundColor: '#93C5FD' }]} />
+          <View style={styles.peticionInfo}>
+            <View style={styles.peticionRow}>
+              <Text style={styles.peticionTituloBold}>{tipo}</Text>
+              <View style={[styles.estadoBadge, { backgroundColor: '#F5A623' }]}>
+                <Text style={styles.estadoText}>Pendiente</Text>
+              </View>
+            </View>
+            <Text style={styles.peticionHorario}>Día {dia} — pendiente por aprobar</Text>
+          </View>
+        </View>
+      ))}
+
       <Text style={styles.footer}>Para aclaraciones consulta a tu encargado..</Text>
     </ScrollView>
   );
@@ -189,8 +259,31 @@ const styles = StyleSheet.create({
   diaSeleccionado: { borderWidth: 2, borderColor: '#111' },
   diaNum: { fontSize: 13, fontFamily: 'FunnelDisplay_400Regular', color: '#FFF' },
   diaVacio: { width: 32, height: 32 },
+  turnoTitle: { fontSize: 28, fontFamily: 'FunnelDisplay_700Bold', color: '#111', marginBottom: 16 },
+  turnoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#BCF0AE',
+    borderRadius: 30,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  turnoLabel: { fontSize: 15, fontFamily: 'FunnelDisplay_700Bold', color: '#111' },
+  turnoHora: { fontSize: 15, fontFamily: 'FunnelDisplay_400Regular', color: '#555' },
+  checkInBtn: {
+    backgroundColor: '#BCF0AE',
+    borderRadius: 30,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  checkBtnText: { fontSize: 16, fontFamily: 'FunnelDisplay_700Bold', color: '#111' },
   peticionesTitle: { fontSize: 28, fontFamily: 'FunnelDisplay_700Bold', color: '#111', marginBottom: 16 },
   peticionCard: { flexDirection: 'row', backgroundColor: '#F0FBF0', borderRadius: 12, marginBottom: 12, overflow: 'hidden' },
+  pendienteCard: { flexDirection: 'row', backgroundColor: '#EFF6FF', borderRadius: 12, marginBottom: 12, overflow: 'hidden' },
   peticionBarra: { width: 6, backgroundColor: '#111' },
   peticionInfo: { flex: 1, padding: 14 },
   peticionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
