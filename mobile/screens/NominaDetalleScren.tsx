@@ -5,33 +5,55 @@ import {
   ScrollView,
   Dimensions,
   Pressable,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import Asterisk from '../assets/SGRH.svg';
 import BrightView from '../assets/brightview.svg';
+import { ApiService, NominaDetalleResponse } from '../services/api.service';
 
 const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
-type Route = RouteProp<RootStackParamList, 'NominaDetalle'>;
-
-const datosBancarios = [
-  { label: 'CLABE Interbancaria', valor: '12345678910111213114' },
-  { label: 'Numero de tarjeta', valor: '12345678910111213114' },
-  { label: 'Banco', valor: '12345678910111213114' },
-  { label: 'RFC', valor: '12345678910111213114' },
-  { label: 'CURP', valor: '12345678910111213114' },
-  { label: 'No. de Seguro Social', valor: '12345678910111213114' },
-  { label: 'Clave de empleado', valor: '12345678910111213114' },
-  { label: 'Salario diario', valor: '$1,250.00' },
-];
+type Route = RouteProp<RootStackParamList, 'NominaDetalleScren'>;
 
 export default function NominaDetalleScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { empleado, tipo } = route.params;
+
+  const [detalle, setDetalle] = useState<NominaDetalleResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDetalle();
+  }, []);
+
+  const loadDetalle = async () => {
+    try {
+      setLoading(true);
+      const data = await ApiService.getNominaDetalle(empleado.id_empleado);
+      setDetalle(data);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'No se pudo cargar el detalle de la nomina');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const datosBancarios = [
+    { label: 'CLABE Interbancaria', valor: 'Pendiente de configurar' },
+    { label: 'Numero de tarjeta', valor: 'Pendiente' },
+    { label: 'Banco', valor: 'Pendiente' },
+    { label: 'RFC', valor: 'Pendiente' },
+    { label: 'CURP', valor: 'Pendiente' },
+    { label: 'No. de Seguro Social', valor: 'Pendiente' },
+    { label: 'Clave de empleado', valor: empleado.id_empleado },
+  ];
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
@@ -46,86 +68,90 @@ export default function NominaDetalleScreen() {
       {/* Título */}
       <View style={styles.titleRow}>
         <Text style={styles.title}>Nomina: </Text>
-        <Text style={styles.titleName}>{empleado.nombre}</Text>
+        <Text style={styles.titleName}>{empleado.nombre_completo}</Text>
       </View>
 
-      {/* Card nómina */}
-      <View style={styles.nominaCard}>
-        <Text style={styles.nominaTitle}>Nomina</Text>
-        <Text style={styles.nominaSubtext}>Ultimo pago: 23 de octubre de 2025</Text>
-        <Text style={styles.nominaSubtext}>Proximo pago: 06 de noviembre de 2025</Text>
+      {loading || !detalle ? (
+        <ActivityIndicator size="large" color="#BCF0AE" style={{ marginTop: 20 }} />
+      ) : (
+        <>
+          {/* Card nómina */}
+          <View style={styles.nominaCard}>
+            <Text style={styles.nominaTitle}>Nomina</Text>
+            <Text style={styles.nominaSubtext}>Ultimo pago: Pendiente</Text>
+            <Text style={styles.nominaSubtext}>Proximo pago: Fin de mes</Text>
 
-        <Text style={styles.fieldLabel}>Folio</Text>
-        <Text style={styles.fieldValue}>FOL-1234-001</Text>
+            <Text style={styles.fieldLabel}>Folio</Text>
+            <Text style={styles.fieldValue}>{detalle.nomina.folio}</Text>
 
-        <View style={styles.divider} />
+            <View style={styles.divider} />
 
-        <View style={styles.tableRow}>
-          <View style={styles.tableCol}>
-            <Text style={styles.fieldLabel}>Periodicidad</Text>
-            <Text style={styles.fieldValue}>14</Text>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.fieldLabel}>Periodicidad</Text>
+                <Text style={styles.fieldValue}>14</Text>
+              </View>
+              <View style={[styles.tableCol, styles.tableBorder]}>
+                <Text style={styles.fieldLabel}>Dias pagados</Text>
+                <Text style={styles.fieldValue}>{detalle.nomina.diasPagados}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.fieldLabel}>Faltas</Text>
+                <Text style={styles.fieldValue}>{detalle.nomina.faltas}</Text>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            <Text style={styles.fieldLabel}>Percepciones</Text>
+            <Text style={styles.fieldValue}>P001 Sueldo Base ${detalle.nomina.percepciones.sueldoBase.toFixed(2)}</Text>
+            <Text style={styles.fieldValue}>P002 Bonos Activos ${detalle.nomina.percepciones.bonos.toFixed(2)}</Text>
+
+            <Text style={[styles.fieldLabel, { marginTop: 12 }]}>Deducciones</Text>
+            <Text style={styles.fieldValue}>D001 ISR (10%) ${detalle.nomina.deducciones.isr.toFixed(2)}</Text>
+            <Text style={styles.fieldValue}>D002 IMSS (5%) ${detalle.nomina.deducciones.imss.toFixed(2)}</Text>
+
+            <View style={styles.divider} />
+
+            <View style={styles.totalesRow}>
+              <View>
+                <Text style={styles.fieldLabel}>Subtotal</Text>
+                <Text style={styles.fieldValue}>${detalle.nomina.totales.subtotal.toFixed(2)}</Text>
+              </View>
+              <View>
+                <Text style={styles.fieldLabel}>Descuentos</Text>
+                <Text style={styles.fieldValue}>${detalle.nomina.totales.descuentos.toFixed(2)}</Text>
+              </View>
+              <View>
+                <Text style={styles.fieldLabel}>Total</Text>
+                <Text style={styles.fieldValue}>${detalle.nomina.totales.total.toFixed(2)}</Text>
+              </View>
+            </View>
+
+            {/* Botones solo si es "por aprobar" */}
+            {tipo === 'aprobar' && (
+              <View style={styles.botonesRow}>
+                <Pressable style={styles.aprobarBtn}>
+                  <Text style={styles.aprobarBtnText}>Aprobar pago</Text>
+                </Pressable>
+                <Pressable style={styles.modificarBtn}>
+                  <Text style={styles.modificarBtnText}>Modificar informacion</Text>
+                </Pressable>
+              </View>
+            )}
           </View>
-          <View style={[styles.tableCol, styles.tableBorder]}>
-            <Text style={styles.fieldLabel}>Dias pagados</Text>
-            <Text style={styles.fieldValue}>14</Text>
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.fieldLabel}>Faltas</Text>
-            <Text style={styles.fieldValue}>0</Text>
-          </View>
-        </View>
 
-        <View style={styles.divider} />
-
-        <Text style={styles.fieldLabel}>Percepciones</Text>
-        <Text style={styles.fieldValue}>P001 001 Sueldo Base $12,500.00</Text>
-        <Text style={styles.fieldValue}>P002 002 Prima Domincal $1,200.00</Text>
-        <Text style={styles.fieldValue}>P003 003 Horas Extra $800</Text>
-
-        <Text style={[styles.fieldLabel, { marginTop: 12 }]}>Deducciones</Text>
-        <Text style={styles.fieldValue}>D001 001 ISR $1,500.00</Text>
-        <Text style={styles.fieldValue}>D002 002 IMSS $1,200.00</Text>
-        <Text style={styles.fieldValue}>D003 003 INFONAVIT $800</Text>
-
-        <View style={styles.divider} />
-
-        <View style={styles.totalesRow}>
-          <View>
-            <Text style={styles.fieldLabel}>Subtotal</Text>
-            <Text style={styles.fieldValue}>$14,500.00</Text>
+          {/* Card datos bancarios */}
+          <View style={styles.bancarioCard}>
+            {datosBancarios.map((d, i) => (
+              <View key={i} style={{ marginBottom: 12 }}>
+                <Text style={styles.fieldLabel}>{d.label}</Text>
+                <Text style={styles.fieldValue}>{d.valor}</Text>
+              </View>
+            ))}
           </View>
-          <View>
-            <Text style={styles.fieldLabel}>Descuentos</Text>
-            <Text style={styles.fieldValue}>$200.00</Text>
-          </View>
-          <View>
-            <Text style={styles.fieldLabel}>Total</Text>
-            <Text style={styles.fieldValue}>$14,500.00</Text>
-          </View>
-        </View>
-
-        {/* Botones solo si es "por aprobar" */}
-        {tipo === 'aprobar' && (
-          <View style={styles.botonesRow}>
-            <Pressable style={styles.aprobarBtn}>
-              <Text style={styles.aprobarBtnText}>Aprobar pago</Text>
-            </Pressable>
-            <Pressable style={styles.modificarBtn}>
-              <Text style={styles.modificarBtnText}>Modificar informacion</Text>
-            </Pressable>
-          </View>
-        )}
-      </View>
-
-      {/* Card datos bancarios */}
-      <View style={styles.bancarioCard}>
-        {datosBancarios.map((d, i) => (
-          <View key={i} style={{ marginBottom: 12 }}>
-            <Text style={styles.fieldLabel}>{d.label}</Text>
-            <Text style={styles.fieldValue}>{d.valor}</Text>
-          </View>
-        ))}
-      </View>
+        </>
+      )}
     </ScrollView>
   );
 }

@@ -5,6 +5,7 @@ import { PersonalModule } from './personal/personal.module';
 import { AsistenciaModule } from './asistencia/asistencia.module';
 import { PermisosModule } from './permisos/permisos.module';
 import { FormacionModule } from './formacion/formacion.module';
+import { NominaModule } from './nomina/nomina.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { FormacionModule } from './formacion/formacion.module';
     AsistenciaModule,
     PermisosModule,
     FormacionModule,
+    NominaModule,
   ],
   controllers: [],
   providers: [],

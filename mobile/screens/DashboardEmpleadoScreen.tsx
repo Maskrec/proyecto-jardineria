@@ -93,7 +93,7 @@ export default function DashboardEmpleadoScreen() {
         </Modal>
 
         {/* Saludo personalizado */}
-        <Text style={styles.greeting}>¡Hola, {user.nombre_completo.split(' ')[0]}!</Text>
+        <Text style={styles.greeting}>¡Hola, {user?.nombre_completo?.split(' ')[0] || 'Empleado'}!</Text>
 
         {/* Título */}
         <Text style={styles.title}>

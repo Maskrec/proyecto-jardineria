@@ -113,6 +113,48 @@ export interface PermisoResponse {
   fecha_creacion: string;
 }
 
+export interface NominaResumenResponse {
+  id_empleado: string;
+  nombre_completo: string;
+  departamento: string;
+  cargo: string;
+  resumen: {
+    diasPagados: number;
+    totalGanancias: number;
+    totalBonos: number;
+    subtotal: number;
+    descuentos: number;
+    total: number;
+  };
+}
+
+export interface NominaDetalleResponse {
+  empleado: {
+    id_empleado: string;
+    nombre_completo: string;
+    departamento: string;
+    cargo: string;
+  };
+  nomina: {
+    folio: string;
+    diasPagados: number;
+    faltas: number;
+    percepciones: {
+      sueldoBase: number;
+      bonos: number;
+    };
+    deducciones: {
+      isr: number;
+      imss: number;
+    };
+    totales: {
+      subtotal: number;
+      descuentos: number;
+      total: number;
+    };
+  };
+}
+
 export class ApiService {
   private static instance: AxiosInstance;
 
@@ -351,6 +393,30 @@ export class ApiService {
       const response = await this.getInstance().get<PermisoResponse[]>(
         `/permisos?id_empleado=${id_empleado}`
       );
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Listar nominas de todos los empleados
+   */
+  static async listNominas(): Promise<NominaResumenResponse[]> {
+    try {
+      const response = await this.getInstance().get<NominaResumenResponse[]>('/nomina');
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Obtener detalle de nomina de un empleado especifico
+   */
+  static async getNominaDetalle(id_empleado: string): Promise<NominaDetalleResponse> {
+    try {
+      const response = await this.getInstance().get<NominaDetalleResponse>(`/nomina/${id_empleado}`);
       return response.data;
     } catch (error) {
       throw this.handleError(error);

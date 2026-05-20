@@ -57,7 +57,7 @@ export type RootStackParamList = {
   Perfil: undefined;
   NominaEmpleadoScreen: undefined;
   NominaEmpleadoDetalleScreen: { periodo: { titulo: string; fechas: string } };
-  NominaDetalleScren: { empleado: { nombre: string; departamento: string; puesto: string }; tipo: 'aprobar' | 'detalle' };
+  NominaDetalleScren: { empleado: any; tipo: 'aprobar' | 'detalle' };
   DashboardEmpleadoScreen: undefined;
   RegEmpleado: undefined;
   DetalleOffboardingScreen: { empleado: { nombre: string; departamento: string; puesto: string; email: string; fecha: string } };
@@ -65,7 +65,7 @@ export type RootStackParamList = {
   DetalleEmpleadoScreen: { empleado: { nombre: string; departamento: string; puesto: string; email: string; fecha: string } };
   AsistenciaDetalleScreen: { empleado: { nombre: string; departamento: string; puesto: string }; tipo: 'validar' | 'historial' };
   AsistenciaCalendarioScreen: { empleado: { nombre: string; departamento: string; puesto: string; email: string; fecha: string } };     
-  DetalleCandidatoScreen: { candidato: { nombre: string; departamento: string; puesto: string; email: string; fecha: string } };
+  DetalleCandidatoScreen: { candidato: any };
 
   NotificacionesScreen: undefined;
   AsistenciaEmpleadoScreen: undefined;
@@ -143,7 +143,7 @@ function RootNavigator() {
 
   return (
     <Stack.Navigator
-      initialRouteName={isAuthenticated ? (user?.role === 'admin' ? 'DashboardAdmin' : 'DashboardEmpleadoScreen') : 'Home'}
+      initialRouteName={isAuthenticated ? (user?.role === 'ADMIN' ? 'DashboardAdmin' : 'DashboardEmpleadoScreen') : 'Home'}
       screenOptions={{ headerShown: false, gestureEnabled: true, gestureDirection: 'horizontal', animation: 'slide_from_right' }}
     >
       {!isAuthenticated ? (
@@ -159,7 +159,7 @@ function RootNavigator() {
       ) : (
         // Pantallas autenticadas
         <>
-          {user?.role === 'admin' ? (
+          {user?.role === 'ADMIN' ? (
             // Pantallas para admin
             <>
               <Stack.Screen name="DashboardAdmin" component={DashboardAdminScreen} />

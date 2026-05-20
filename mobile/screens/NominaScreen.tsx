@@ -6,30 +6,43 @@ import {
   Dimensions,
   Pressable,
   TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import Asterisk from '../assets/SGRH.svg';
 import BrightView from '../assets/brightview.svg';
+import { ApiService, NominaResumenResponse } from '../services/api.service';
 
 const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-const porAprobar = [
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-];
-
-const empleados = [
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo' },
-];
-
 export default function NominaScreen() {
   const navigation = useNavigation<Nav>();
+  const [nominas, setNominas] = useState<NominaResumenResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadNominas();
+    }, [])
+  );
+
+  const loadNominas = async () => {
+    try {
+      setLoading(true);
+      const data = await ApiService.listNominas();
+      setNominas(data);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'No se pudieron cargar las nominas');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFF' }}>
@@ -45,48 +58,55 @@ export default function NominaScreen() {
         {/* Título */}
         <Text style={styles.title}>Nomina</Text>
 
-        {/* Nóminas por aprobar */}
-        <Text style={styles.sectionLabel}>Nominas por aprobar</Text>
-        {porAprobar.map((e, i) => (
-          <Pressable
-            key={i}
-            style={styles.card}
-            onPress={() => navigation.navigate('NominaDetalleScren', { empleado: e, tipo: 'aprobar' })}
-          >
-            <View style={styles.avatar} />
-            <View style={styles.cardInfo}>
-              <Text style={styles.cardName}>{e.nombre}</Text>
-              <Text style={styles.cardDetail}>{e.departamento}</Text>
-              <Text style={styles.cardDetail}>{e.puesto}</Text>
-            </View>
-          </Pressable>
-        ))}
+        {loading ? (
+          <ActivityIndicator size="large" color="#BCF0AE" style={{ marginTop: 20 }} />
+        ) : (
+          <>
+            {/* Nóminas por aprobar */}
+            <Text style={styles.sectionLabel}>Nominas por aprobar</Text>
+            {nominas.map((e, i) => (
+              <Pressable
+                key={`aprobar-${i}`}
+                style={styles.card}
+                onPress={() => navigation.navigate('NominaDetalleScren', { empleado: e, tipo: 'aprobar' })}
+              >
+                <View style={styles.avatar} />
+                <View style={styles.cardInfo}>
+                  <Text style={styles.cardName}>{e.nombre_completo}</Text>
+                  <Text style={styles.cardDetail}>{e.departamento}</Text>
+                  <Text style={styles.cardDetail}>{e.cargo}</Text>
+                  <Text style={[styles.cardDetail, { color: '#111', marginTop: 4 }]}>Total a pagar: ${e.resumen.total.toFixed(2)}</Text>
+                </View>
+              </Pressable>
+            ))}
 
-        {/* Buscador */}
-        <View style={styles.searchRow}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Ingresa tu busqueda..."
-            placeholderTextColor="#aaa"
-          />
-          <View style={styles.searchButton} />
-        </View>
-
-        {/* Lista general */}
-        {empleados.map((e, i) => (
-          <Pressable
-            key={i}
-            style={styles.card}
-            onPress={() => navigation.navigate('NominaDetalleScren', { empleado: e, tipo: 'detalle' })}
-          >
-            <View style={styles.avatar} />
-            <View style={styles.cardInfo}>
-              <Text style={styles.cardName}>{e.nombre}</Text>
-              <Text style={styles.cardDetail}>{e.departamento}</Text>
-              <Text style={styles.cardDetail}>{e.puesto}</Text>
+            {/* Buscador */}
+            <View style={styles.searchRow}>
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Ingresa tu busqueda..."
+                placeholderTextColor="#aaa"
+              />
+              <View style={styles.searchButton} />
             </View>
-          </Pressable>
-        ))}
+
+            {/* Lista general */}
+            {nominas.map((e, i) => (
+              <Pressable
+                key={`detalle-${i}`}
+                style={styles.card}
+                onPress={() => navigation.navigate('NominaDetalleScren', { empleado: e, tipo: 'detalle' })}
+              >
+                <View style={styles.avatar} />
+                <View style={styles.cardInfo}>
+                  <Text style={styles.cardName}>{e.nombre_completo}</Text>
+                  <Text style={styles.cardDetail}>{e.departamento}</Text>
+                  <Text style={styles.cardDetail}>{e.cargo}</Text>
+                </View>
+              </Pressable>
+            ))}
+          </>
+        )}
 
         <View style={{ height: 40 }} />
       </ScrollView>

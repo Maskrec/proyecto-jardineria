@@ -6,27 +6,45 @@ import {
   Dimensions,
   Pressable,
   TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import Asterisk from '../assets/SGRH.svg';
 import BrightView from '../assets/brightview.svg';
+import { ApiService, EmpleadoResponse } from '../services/api.service';
 
 const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-const candidatos = [
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
-  { nombre: 'Natanael Cano', departamento: 'Departamento', puesto: 'Puesto de trabajo', email: 'natanael.cano@example.com', fecha: '2023-10-01' },
-];
-
 export default function ReclutamientoScreen() {
   const navigation = useNavigation<Nav>();
+  const [candidatos, setCandidatos] = useState<EmpleadoResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadCandidatos();
+    }, [])
+  );
+
+  const loadCandidatos = async () => {
+    try {
+      setLoading(true);
+      const data = await ApiService.listEmployees();
+      // Filtrar solo los empleados
+      const empleados = data.filter(e => e.role === 'EMPLEADO');
+      setCandidatos(empleados);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'No se pudieron cargar los candidatos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFF' }}>
@@ -53,16 +71,20 @@ export default function ReclutamientoScreen() {
         </View>
 
         {/* Lista de candidatos */}
-        {candidatos.map((c, i) => (
-          <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleCandidatoScreen', {candidato: c })}>
-            <View style={styles.avatar} />
-            <View style={styles.cardInfo}>
-              <Text style={styles.cardName}>{c.nombre}</Text>
-              <Text style={styles.cardDetail}>{c.departamento}</Text>
-              <Text style={styles.cardDetail}>{c.puesto}</Text>
-            </View>
-          </Pressable>
-        ))}
+        {loading ? (
+          <ActivityIndicator size="large" color="#BCF0AE" style={{ marginTop: 20 }} />
+        ) : (
+          candidatos.map((c, i) => (
+            <Pressable key={i} style={styles.card} onPress={() => navigation.navigate('DetalleCandidatoScreen', { candidato: c })}>
+              <View style={styles.avatar} />
+              <View style={styles.cardInfo}>
+                <Text style={styles.cardName}>{c.nombre_completo}</Text>
+                <Text style={styles.cardDetail}>{c.departamento}</Text>
+                <Text style={styles.cardDetail}>{c.cargo}</Text>
+              </View>
+            </Pressable>
+          ))
+        )}
 
         <View style={{ height: 40 }} />
       </ScrollView>

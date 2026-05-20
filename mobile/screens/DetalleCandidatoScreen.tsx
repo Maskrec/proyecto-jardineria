@@ -15,7 +15,7 @@ import BrightView from '../assets/brightview.svg';
 
 const { width, height } = Dimensions.get('window');
 type Nav = NativeStackNavigationProp<RootStackParamList>;
-type Route = RouteProp<RootStackParamList, 'DetalleCandidato'>;
+type Route = RouteProp<RootStackParamList, 'DetalleCandidatoScreen'>;
 
 export default function DetalleCandidatoScreen() {
   const navigation = useNavigation<Nav>();
@@ -23,11 +23,11 @@ export default function DetalleCandidatoScreen() {
   const { candidato } = route.params;
 
   const detalles = [
-    'email@example.com',
-    '+00 111 111 1111',
+    candidato.email_corporativo || 'Sin email',
+    candidato.telefono || 'Sin telefono',
     'Lunes a viernes, de 9:00 a 18:00',
-    'Fecha de nacimiento: 05 mayo 2026',
-    'Fecha de postulacion: 05 mayo 2026',
+    `Fecha de nacimiento: ${candidato.fecha_nacimiento ? new Date(candidato.fecha_nacimiento).toLocaleDateString() : 'No registrada'}`,
+    `Fecha de ingreso: ${candidato.fecha_creacion ? new Date(candidato.fecha_creacion).toLocaleDateString() : 'No registrada'}`,
   ];
 
   return (
@@ -45,9 +45,9 @@ export default function DetalleCandidatoScreen() {
         <View style={styles.profileRow}>
           <View style={styles.avatar} />
           <View style={styles.profileInfo}>
-            <Text style={styles.nombre}>{candidato.nombre}</Text>
+            <Text style={styles.nombre}>{candidato.nombre_completo}</Text>
             <Text style={styles.detailGray}>{candidato.departamento}</Text>
-            <Text style={styles.detailGray}>{candidato.puesto}</Text>
+            <Text style={styles.detailGray}>{candidato.cargo}</Text>
           </View>
         </View>
 

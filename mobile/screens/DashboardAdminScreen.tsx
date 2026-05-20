@@ -96,7 +96,7 @@ export default function DashboardAdminScreen() {
         </Modal>
 
         {/* Saludo personalizado */}
-        <Text style={styles.greeting}>¡Hola, {user.nombre_completo.split(' ')[0]}!</Text>
+        <Text style={styles.greeting}>¡Hola, {user?.nombre_completo?.split(' ')[0] || 'Admin'}!</Text>
 
         {/* Título */}
         <Text style={styles.title}>

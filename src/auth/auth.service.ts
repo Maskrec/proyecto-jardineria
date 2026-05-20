@@ -33,7 +33,9 @@ export class AuthService {
             access_token: await this.jwtService.signAsync(payload),
             user: {
                 id: empleado.id_empleado,
-                nombre: empleado.nombre_completo,
+                id_empleado: empleado.id_empleado,
+                nombre_completo: empleado.nombre_completo,
+                email_corporativo: empleado.email_corporativo,
                 role: empleado.role,
             },
 
