@@ -1,11 +1,11 @@
-services:
-  # 1. Base de datos PostgreSQL
-  - type: psql
-    name: brightview-db
-    plan: free # Puedes usar free para empezar
+databases:
+  - name: brightview-db
+    plan: free
     region: ohio
     databaseName: brightview
     user: admin
+
+services:
 
   # 2. API Backend en NestJS
   - type: web
