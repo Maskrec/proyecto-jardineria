@@ -65,13 +65,6 @@ export class PersonalService {
   }
 
   async onboardingInit(createPersonalDto: CreatePersonalDto) {
-    const empleadosRegistrados = await this.prisma.personal.count();
-    if (empleadosRegistrados > 0) {
-      throw new ForbiddenException(
-        'La aplicacion ya fue inicializada. Usa el endpoint /personal/onboarding con un usuario ADMIN o RH.',
-      );
-    }
-
     if (!createPersonalDto.role) {
       createPersonalDto.role = Role.ADMIN;
     }
