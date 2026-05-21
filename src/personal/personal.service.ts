@@ -135,7 +135,6 @@ export class PersonalService {
     const empleado = await this.prisma.personal.findUnique({
       where: { id_empleado },
       select: {
-        id: true,
         id_empleado: true,
         nombre_completo: true,
         email_corporativo: true,
@@ -146,8 +145,7 @@ export class PersonalService {
         direccion: true,
         fecha_nacimiento: true,
         estado_laboral: true,
-        fecha_creacion: true,
-        fecha_actualizacion: true,
+        dias_disponibles: true,
       },
     });
 
