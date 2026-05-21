@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePersonalDto } from './dto/create-personal.dto';
 import { RegisterEmpleadoDto } from './dto/register-empleado.dto';
@@ -129,5 +129,32 @@ export class PersonalService {
         estado_laboral: true,
       },
     });
+  }
+
+  async findOne(id_empleado: string) {
+    const empleado = await this.prisma.personal.findUnique({
+      where: { id_empleado },
+      select: {
+        id: true,
+        id_empleado: true,
+        nombre_completo: true,
+        email_corporativo: true,
+        role: true,
+        telefono: true,
+        cargo: true,
+        departamento: true,
+        direccion: true,
+        fecha_nacimiento: true,
+        estado_laboral: true,
+        fecha_creacion: true,
+        fecha_actualizacion: true,
+      },
+    });
+
+    if (!empleado) {
+      throw new NotFoundException(`Empleado con ID ${id_empleado} no encontrado`);
+    }
+
+    return empleado;
   }
 }

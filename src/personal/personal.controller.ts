@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Param } from '@nestjs/common';
 import { PersonalService } from './personal.service';
 import { CreatePersonalDto } from './dto/create-personal.dto';
 import { RegisterEmpleadoDto } from './dto/register-empleado.dto';
@@ -50,5 +50,15 @@ export class PersonalController {
   @Roles(Role.ADMIN, Role.RH)
   findAll() {
     return this.personalService.findAll();
+  }
+
+  /**
+   * Obtener empleado por ID
+   * GET /personal/:id_empleado
+   */
+  @Get(':id_empleado')
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id_empleado') id_empleado: string) {
+    return this.personalService.findOne(id_empleado);
   }
 }
